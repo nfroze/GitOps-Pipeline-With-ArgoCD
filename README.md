@@ -12,6 +12,8 @@ This approach demonstrates production-ready thinking: infrastructure as code for
 
 ## Architecture
 
+![Cloud Architecture](screenshots/cloud-architecture.png)
+
 Terraform provisions the foundational AWS infrastructure: a VPC spanning two availability zones with public and private subnets, NAT gateway for outbound connectivity, and an EKS cluster with managed node groups running in private subnets.
 
 ArgoCD runs inside the cluster and watches this Git repository. When commits land, ArgoCD detects the change and reconciles the cluster state. The monitoring Application pulls the kube-prometheus-stack chart directly from the Prometheus community Helm repository, deploying Prometheus for metrics scraping and Grafana for dashboards—all exposed via LoadBalancer services for immediate access.
