@@ -1,60 +1,57 @@
-# GitOps Pipeline with ArgoCD and Full-Stack Observability
+# GitOps Pipeline With ArgoCD
 
-A production-style Kubernetes deployment pipeline where infrastructure changes flow from Git commits to running workloads automatically, with integrated monitoring to observe the entire system in real time.
+A fully automated GitOps delivery pipeline on AWS EKS where ArgoCD continuously reconciles infrastructure state from Git, eliminating manual kubectl deployments and configuration drift.
 
 ## Overview
 
-Organisations adopting Kubernetes face two interconnected challenges: deploying applications reliably and understanding what's happening inside the cluster. This project addresses both by implementing GitOps-driven continuous delivery with ArgoCD alongside a complete observability stack.
+In production environments, manual deployments create drift between what's defined in code and what's actually running. This project solves that by implementing a GitOps workflow where Git is the single source of truth — push a change, and ArgoCD automatically syncs the cluster to match.
 
-The system provisions an EKS cluster using Terraform, then deploys ArgoCD to manage all subsequent workloads declaratively. Two ArgoCD Applications handle the deployment pipeline: one synchronises application manifests from this repository, while the other deploys the kube-prometheus-stack via Helm for metrics collection and visualisation. Both applications use automated sync policies with self-healing enabled, meaning any manual drift is automatically corrected to match the Git source of truth.
+The pipeline provisions an EKS cluster and VPC using Terraform, then hands deployment responsibility to ArgoCD. Two ArgoCD Applications manage the cluster: one deploys an Nginx-based web application from the repo's manifests directory, and another deploys a full Prometheus and Grafana monitoring stack via Helm. Both applications are configured with automated sync, self-healing, and pruning — if someone manually changes a resource in the cluster, ArgoCD reverts it.
 
-This approach demonstrates production-ready thinking: infrastructure as code for repeatability, GitOps for auditability, and observability to validate that deployments behave as expected.
+This mirrors how platform teams operate in real organisations: infrastructure provisioned with IaC, application delivery handled through GitOps, and observability baked in from day one.
 
 ## Architecture
 
-![Cloud Architecture](screenshots/cloud-architecture.png)
+![](screenshots/cloud-architecture.png)
 
-Terraform provisions the foundational AWS infrastructure: a VPC spanning two availability zones with public and private subnets, NAT gateway for outbound connectivity, and an EKS cluster with managed node groups running in private subnets.
+The system runs inside an AWS VPC in eu-west-2 spanning two availability zones. Terraform provisions the VPC with public and private subnets, a NAT gateway for outbound traffic, and an EKS cluster with two t3.medium managed nodes placed in the private subnets.
 
-ArgoCD runs inside the cluster and watches this Git repository. When commits land, ArgoCD detects the change and reconciles the cluster state. The monitoring Application pulls the kube-prometheus-stack chart directly from the Prometheus community Helm repository, deploying Prometheus for metrics scraping and Grafana for dashboards—all exposed via LoadBalancer services for immediate access.
-
-The demo application (nginx) runs with defined resource requests and limits, deployed across three replicas to demonstrate horizontal scaling. Grafana provides pre-configured dashboards for cluster-wide and namespace-level metrics visibility.
+ArgoCD runs inside the cluster and watches two sources: the GitHub repository for application manifests, and the Prometheus community Helm chart repository for the monitoring stack. When changes are detected in either source, ArgoCD reconciles the cluster state automatically. The web application and Grafana dashboards are both exposed externally via LoadBalancer services.
 
 ## Tech Stack
 
-**Infrastructure**: AWS EKS, VPC (multi-AZ), Terraform  
-**GitOps**: ArgoCD with automated sync and self-healing  
-**Monitoring**: Prometheus, Grafana (kube-prometheus-stack)  
-**Workloads**: Kubernetes Deployments, Services, ConfigMaps  
-**Tooling**: Helm, kubectl
+**Infrastructure**: AWS EKS, VPC (multi-AZ), Terraform
+**GitOps**: ArgoCD (automated sync, self-heal, prune)
+**Monitoring**: Prometheus, Grafana (kube-prometheus-stack)
+**Application**: Nginx on Kubernetes (Deployment, Service, ConfigMap)
 
 ## Key Decisions
 
-- **ArgoCD over Flux**: ArgoCD provides a visual dashboard showing sync status and application health, which aids debugging and demonstrates the GitOps workflow clearly to stakeholders unfamiliar with the tooling.
+- **GitOps over push-based CI/CD**: ArgoCD pulls desired state from Git rather than a pipeline pushing changes to the cluster. This means the cluster self-heals from drift and there's a clear audit trail of every change through Git history.
 
-- **Helm chart via ArgoCD Application**: Rather than installing kube-prometheus-stack imperatively, the monitoring stack is defined as an ArgoCD Application. This keeps all cluster state in Git and allows the monitoring configuration to evolve through pull requests.
+- **kube-prometheus-stack via ArgoCD Application**: Rather than installing monitoring with Helm CLI commands, the entire monitoring stack is declared as an ArgoCD Application. This means monitoring itself is GitOps-managed — if someone deletes Grafana, ArgoCD recreates it.
 
-- **Automated sync with self-healing**: Enabling both `automated` sync and `selfHeal` ensures the cluster continuously converges to the declared state. Manual changes via kubectl are overwritten, enforcing Git as the single source of truth.
+- **Private subnet placement with public endpoints**: EKS nodes run in private subnets for security, while the cluster API endpoint remains publicly accessible for management. NAT gateway handles outbound traffic for container image pulls.
 
-- **Single NAT gateway**: For a development environment, a single NAT gateway reduces cost while still enabling private subnet egress. Production would use one per AZ for resilience.
+- **Single NAT gateway**: Chose cost efficiency over high availability for this non-production workload, while still demonstrating the correct architectural pattern of private node placement.
 
 ## Screenshots
 
-![ArgoCD dashboard](screenshots/1.png)
+![](screenshots/1.png)
 
-![ArgoCD monitoring application](screenshots/2.png)
+![](screenshots/2.png)
 
-![ArgoCD webapp application](screenshots/3.png)
+![](screenshots/3.png)
 
-![Grafana cluster dashboard](screenshots/4.png)
+![](screenshots/4.png)
 
-![Grafana namespace view](screenshots/5.png)
+![](screenshots/5.png)
 
-![Deployed application](screenshots/6.png)
+![](screenshots/6.png)
 
-![Monitoring pods](screenshots/7.png)
+![](screenshots/7.png)
 
-![AWS EKS cluster](screenshots/8.png)
+![](screenshots/8.png)
 
 ## Author
 
