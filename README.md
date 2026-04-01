@@ -37,21 +37,37 @@ ArgoCD runs inside the cluster and watches two sources: the GitHub repository fo
 
 ## Screenshots
 
-![](screenshots/1.png)
+**ArgoCD Applications Overview** — Two ArgoCD Applications are defined and deployed in the cluster: one for the Nginx web application and another for the Prometheus monitoring stack. This view shows both applications initialized and ready for synchronization.
 
-![](screenshots/2.png)
+![](screenshots/argocd-applications-overview.png)
 
-![](screenshots/3.png)
+**ArgoCD Applications List** — The full applications list view in ArgoCD displays multiple deployed applications with their status indicators and configuration details. The interface shows real-time synchronization status and recent activity for each application.
 
-![](screenshots/4.png)
+![](screenshots/argocd-applications-list.png)
 
-![](screenshots/5.png)
+**Nginx Application Sync Status** — A detailed dependency tree showing the complete resource hierarchy of the Nginx application. The sync status is healthy with all components synced, including the nginx-config ConfigMap, nginx-service Service, nginx Deployment, and underlying Pod replicas (nginx-56bb68b44b), with each component showing individual sync success timestamps.
 
-![](screenshots/6.png)
+![](screenshots/nginx-app-sync-status.png)
 
-![](screenshots/7.png)
+**Grafana CPU Metrics Dashboard** — Real-time CPU utilization metrics displayed in Grafana showing multiple key performance indicators (2.76%, 27.2%, 18.1%, 29.9%, 9.55%, 12.5%) with a detailed time-series graph tracking CPU usage patterns across the cluster resources.
 
-![](screenshots/8.png)
+![](screenshots/grafana-cpu-metrics.png)
+
+**Grafana Memory Metrics Dashboard** — Memory usage statistics displayed in Grafana showing key metrics (0.0132%, 0.00658%, 5.02%, 2.51%) with a stacked area chart visualization illustrating memory consumption trends over time with distinct color bands for different memory categories.
+
+![](screenshots/grafana-memory-metrics.png)
+
+**Nginx Welcome Page** — The default Nginx landing page confirming successful deployment and accessibility of the web application. The page displays the standard "Welcome to nginx!" message with links to nginx.org documentation, confirming the Kubernetes Nginx service is properly exposed and responding to requests.
+
+![](screenshots/nginx-welcome-page.png)
+
+**kubectl Monitoring Pods** — PowerShell output from `kubectl get pods -n monitoring` command showing all running Prometheus monitoring stack components, including Prometheus Operator (2/2 ready), Grafana instance (3/3 ready), Prometheus AlertManager, and multiple Prometheus node exporters, all in Running status and deployed within the monitoring namespace.
+
+![](screenshots/kubectl-monitoring-pods.png)
+
+**Prometheus Alert Rules** — Prometheus AlertManager view displaying the configured alert rules grouped by their alert groups. The interface shows alert rules in a managed state with rule summaries and their current status, providing visibility into the monitoring and alerting configuration for the cluster.
+
+![](screenshots/prometheus-alert-rules.png)
 
 ## Author
 
