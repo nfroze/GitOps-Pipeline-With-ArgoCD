@@ -47,7 +47,7 @@ ArgoCD runs inside the cluster and watches two sources: the GitHub repository fo
 
 **Nginx Application Sync Status** — A detailed dependency tree showing the complete resource hierarchy of the Nginx application. The sync status is healthy with all components synced, including the nginx-config ConfigMap, nginx-service Service, nginx Deployment, and underlying Pod replicas (nginx-56bb68b44b), with each component showing individual sync success timestamps.
 
-![](screenshots/nginx-app-sync-status.png)
+![](screenshots/argocd-sync-status.png)
 
 **Grafana CPU Metrics Dashboard** — Real-time CPU utilization metrics displayed in Grafana showing multiple key performance indicators (2.76%, 27.2%, 18.1%, 29.9%, 9.55%, 12.5%) with a detailed time-series graph tracking CPU usage patterns across the cluster resources.
 
@@ -61,7 +61,7 @@ ArgoCD runs inside the cluster and watches two sources: the GitHub repository fo
 
 ![](screenshots/nginx-welcome-page.png)
 
-**kubectl Monitoring Pods** — PowerShell output from `kubectl get pods -n monitoring` command showing all running Prometheus monitoring stack components, including Prometheus Operator (2/2 ready), Grafana instance (3/3 ready), Prometheus AlertManager, and multiple Prometheus node exporters, all in Running status and deployed within the monitoring namespace.
+**kubectl Monitoring Pods** — PowerShell output from `kubectl get pods -n monitoring` command showing all running Prometheus monitoring stack components, including AlertManager (2/2 ready), Grafana instance (3/3 ready), Prometheus Operator (1/1 ready), kube-state-metrics, and multiple Prometheus node exporters, all in Running status and deployed within the monitoring namespace.
 
 ![](screenshots/kubectl-monitoring-pods.png)
 
