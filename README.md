@@ -12,8 +12,6 @@ This mirrors how platform teams operate in real organisations: infrastructure pr
 
 ## Architecture
 
-![](screenshots/cloud-architecture.png)
-
 The system runs inside an AWS VPC in eu-west-2 spanning two availability zones. Terraform provisions the VPC with public and private subnets, a NAT gateway for outbound traffic, and an EKS cluster with two t3.medium managed nodes placed in the private subnets.
 
 ArgoCD runs inside the cluster and watches two sources: the GitHub repository for application manifests, and the Prometheus community Helm chart repository for the monitoring stack. When changes are detected in either source, ArgoCD reconciles the cluster state automatically. The web application and Grafana dashboards are both exposed externally via LoadBalancer services.
